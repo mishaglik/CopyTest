@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/gms/DedInside/GigaInt/build",
+  "command": "/usr/bin/g++   -g -Wall -Wextra -ggdb3 -O2 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr -std=gnu++20 -o CMakeFiles/GigaInt.dir/src/main.cpp.o -c /home/gms/DedInside/GigaInt/src/main.cpp",
+  "file": "/home/gms/DedInside/GigaInt/src/main.cpp"
+},
+{
+  "directory": "/home/gms/DedInside/GigaInt/build",
+  "command": "/usr/bin/g++   -g -Wall -Wextra -ggdb3 -O2 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr -std=gnu++20 -o CMakeFiles/GigaInt.dir/src/GigaInt.cpp.o -c /home/gms/DedInside/GigaInt/src/GigaInt.cpp",
+  "file": "/home/gms/DedInside/GigaInt/src/GigaInt.cpp"
+}
+]
