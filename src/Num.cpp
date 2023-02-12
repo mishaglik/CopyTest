@@ -5,37 +5,37 @@ std::ostream& operator<<(std::ostream& out, Num t)
     return out << t.x;
 }
 
-Num operator+(Num a, Num b)
+Num operator+(const Num& a, const Num& b)
 {
     return Num(a.x + b.x);
 }
 
-Num operator-(Num a, Num b)
+Num operator-(const Num& a, const Num& b)
 {
     return Num(a.x - b.x);
 }
 
-Num operator*(Num a, Num b)
+Num operator*(const Num& a, const Num& b)
 {
     return Num(a.x * b.x);
 }
 
-Num operator/(Num a, Num b)
+Num operator/(const Num& a, const Num& b)
 {
     return Num(a.x / b.x);
 }
 
-bool operator==(Num a, Num b)
+bool operator==(const Num& a, const Num& b)
 {
     return a.x == b.x;
 }
 
-bool operator<(Num a, Num b)
+bool operator<(const Num& a, const Num& b)
 {
     return a.x < b.x;
 }
 
-Num operator-(Num x)
+Num operator-(const Num& x)
 {
     return Num(-x.x);
 }

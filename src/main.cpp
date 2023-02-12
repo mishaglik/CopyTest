@@ -12,7 +12,7 @@ using WNum = Watcher<Num>;
 
 const WNum INF_SOL(-1, "INF_SOL");
 
-WNum sqrt(WNum)
+WNum sqrt(const WNum&)
 {
     //Super duper sqrt calcluator;
     return WNum(2);
@@ -21,12 +21,12 @@ WNum sqrt(WNum)
 struct Solution
 {
     WNum nRoots;
-    WNum roots[2];
+    WNum roots[2] = {{"roots[0]"}, {"roots[1]"}};
 };
 
 using WSolution = Watcher<Solution>;
 
-WSolution solveLinEq(WNum a, WNum b)
+WSolution solveLinEq(const WNum& a, const WNum& b)
 {
     FUNC_INSPECT
     WSolution solution("solution");
@@ -48,7 +48,7 @@ WSolution solveLinEq(WNum a, WNum b)
     return solution;
 }
 
-WSolution solveSqEq(WNum a, WNum b, WNum c)
+WSolution solveSqEq(const WNum& a, const WNum& b, const WNum& c)
 {
     FUNC_INSPECT
     WSolution solution("solution");
@@ -75,7 +75,7 @@ WSolution solveSqEq(WNum a, WNum b, WNum c)
     return solution;
 }
 
-void printSolution(Solution sol)
+void printSolution(const Solution& sol)
 {
     std::cout << sol.nRoots.x << '\n';
 }

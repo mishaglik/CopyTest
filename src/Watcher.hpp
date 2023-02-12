@@ -137,46 +137,46 @@ private:
 };
 
 template<class T> 
-Watcher<T> operator+(Watcher<T> lhs, Watcher<T> rhs)
+Watcher<T> operator+(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return Watcher<T>(static_cast<T>(lhs) + static_cast<T>(rhs), lhs, rhs, "+");
 }
 
 template<class T> 
-Watcher<T> operator-(Watcher<T> lhs, Watcher<T> rhs)
+Watcher<T> operator-(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return Watcher<T>(static_cast<T>(lhs) - static_cast<T>(rhs), lhs, rhs, "-");
 }
 template<class T> 
-Watcher<T> operator*(Watcher<T> lhs, Watcher<T> rhs)
+Watcher<T> operator*(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return Watcher<T>(static_cast<T>(lhs) * static_cast<T>(rhs), lhs, rhs, "*");
 }
 template<class T> 
-Watcher<T> operator/(Watcher<T> lhs, Watcher<T> rhs)
+Watcher<T> operator/(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return Watcher<T>(static_cast<T>(lhs) / static_cast<T>(rhs), lhs, rhs, "/");
 }
 template<class T> 
-Watcher<T> operator-(Watcher<T> lhs)
+Watcher<T> operator-(const Watcher<T>& lhs)
 {
     FUNC_INSPECT
     return Watcher<T>(-static_cast<T>(lhs), lhs, "-@");
 }
 
 template<class T> 
-bool operator==(Watcher<T> lhs, Watcher<T> rhs)
+bool operator==(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return static_cast<T>(lhs) == static_cast<T>(rhs);
 }
 
 template<class T> 
-bool operator<(Watcher<T> lhs, Watcher<T> rhs)
+bool operator<(const Watcher<T>& lhs, const Watcher<T>& rhs)
 {
     FUNC_INSPECT
     return static_cast<T>(lhs) < static_cast<T>(rhs);

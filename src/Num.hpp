@@ -12,12 +12,12 @@ struct Num
 
 std::ostream& operator<<(std::ostream& out, Num t);
 
-Num operator+(Num a, Num b);
-Num operator-(Num a, Num b);
-Num operator*(Num a, Num b);
-Num operator/(Num a, Num b);
-bool operator==(Num a, Num b);
-bool operator< (Num a, Num b);
-Num operator-(Num x);
+Num operator+(const Num& a, const Num& b);
+Num operator-(const Num& a, const Num& b);
+Num operator*(const Num& a, const Num& b);
+Num operator/(const Num& a, const Num& b);
+bool operator==(const Num& a, const Num& b);
+bool operator< (const Num& a, const Num& b);
+Num operator-(const Num& x);
 
 #endif /* NUM_HPP */
