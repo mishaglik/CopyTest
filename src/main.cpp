@@ -1,10 +1,13 @@
 #include "Logger.hpp"
 #include "Watcher.hpp"
 #include "Num.hpp"
+#include <cassert>
 #include <cstddef>
 #include <ostream>
+#include <utility>
 #include <vector>
 #include <cmath>
+#include "MySTL.hpp"
 
 Logger LOG("img.png");
 
@@ -26,7 +29,7 @@ struct Solution
     Solution(const Solution& sol)
         : nRoots(sol.nRoots), roots{sol.roots[0], sol.roots[1]} {}
     Solution(Solution &&sol)
-        : nRoots(sol.nRoots), roots{sol.roots[0], sol.roots[1]} {}
+        : nRoots(my::move(sol.nRoots)), roots{my::move(sol.roots[0]), my::move(sol.roots[1])} {}
     Solution& operator=(const Solution& sol) {
       nRoots = sol.nRoots;
       roots[0] = sol.roots[0];

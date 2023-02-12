@@ -3,6 +3,8 @@
 #include "Logger.hpp"
 #include <string>
 #include <utility>
+#include "MySTL.hpp"
+#include <type_traits>
 
 template<class T>
 class Watcher : public T
@@ -121,8 +123,9 @@ public:
         return *this;
     }
 
-    Watcher(const Watcher&& other) : T(other)
+    Watcher(Watcher<T>&& other) : T(my::move(other))
     {
+        static_assert(std::is_rvalue_reference_v<decltype(other)>);
         _debugInfo.history = "Move of \\\"" + other._debugInfo.history + "\\\"";
         _debugInfo.originalName = _debugInfo.history;
         _debugInfo.address = this;
@@ -134,9 +137,9 @@ public:
         LOG.logCreationMove(_debugInfo);
     }
 
-    Watcher& operator=(const Watcher&& other)
+    Watcher& operator=(Watcher&& other)
     {
-        T::operator=(other);
+        T::operator=(my::move(other));
         _debugInfo.history = "Move of \\\"" + other._debugInfo.history + "\\\"";
         _debugInfo.parentId = other._debugInfo.nodeId;
         if constexpr (Printable<T>)
