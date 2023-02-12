@@ -26,6 +26,8 @@ public:
     void logCreation     (const DebugInfo& info);
     void logCreationCopy (const DebugInfo& info);
     void logAssigmentCopy(const DebugInfo& info);
+    void logCreationMove (const DebugInfo& info);
+    void logAssigmentMove(const DebugInfo& info);
     void logDeletion     (const DebugInfo& info);
 
     void logCreationOperator(const DebugInfo& infoRes, const DebugInfo& infoLhs, const DebugInfo& infoRhs, const char* operatorName);

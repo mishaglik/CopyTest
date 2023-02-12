@@ -2,6 +2,7 @@
 #define WATCHER_HPP
 #include "Logger.hpp"
 #include <string>
+#include <utility>
 
 template<class T>
 class Watcher : public T
@@ -108,8 +109,8 @@ public:
 
     Watcher& operator=(const Watcher& other)
     {
+        T::operator=(other);
         _debugInfo.history = "Copy of \\\"" + other._debugInfo.history + "\\\"";
-        _debugInfo.originalName = _debugInfo.history;
         _debugInfo.parentId = other._debugInfo.nodeId;
         if constexpr (Printable<T>)
         {
@@ -117,6 +118,33 @@ public:
             _debugInfo.value << *this;
         }
         LOG.logAssigmentCopy(_debugInfo);
+        return *this;
+    }
+
+    Watcher(const Watcher&& other) : T(other)
+    {
+        _debugInfo.history = "Move of \\\"" + other._debugInfo.history + "\\\"";
+        _debugInfo.originalName = _debugInfo.history;
+        _debugInfo.address = this;
+        _debugInfo.parentId = other._debugInfo.nodeId;
+        if constexpr (Printable<T>)
+        {
+            _debugInfo.value << *this;
+        }
+        LOG.logCreationMove(_debugInfo);
+    }
+
+    Watcher& operator=(const Watcher&& other)
+    {
+        T::operator=(other);
+        _debugInfo.history = "Move of \\\"" + other._debugInfo.history + "\\\"";
+        _debugInfo.parentId = other._debugInfo.nodeId;
+        if constexpr (Printable<T>)
+        {
+            _debugInfo.value.str("");
+            _debugInfo.value << *this;
+        }
+        LOG.logAssigmentMove(_debugInfo);
         return *this;
     }
 

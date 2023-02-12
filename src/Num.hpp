@@ -8,6 +8,8 @@ struct Num
     Num(int x = 0) : x(x) {}
     Num(const Num& oth) : x(oth.x) { asm volatile ("nop"); }
     Num& operator=(const Num& oth) {x = oth.x; asm volatile ("nop"); return *this; }
+    Num(Num&& oth) : x(oth.x) {}
+    Num& operator=(Num&& oth) { x = oth.x; return *this;}
 };
 
 std::ostream& operator<<(std::ostream& out, Num t);

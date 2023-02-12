@@ -20,8 +20,25 @@ WNum sqrt(const WNum&)
 
 struct Solution
 {
-    WNum nRoots;
+    WNum nRoots = "nRoots";
     WNum roots[2] = {{"roots[0]"}, {"roots[1]"}};
+    Solution() {}
+    Solution(const Solution& sol)
+        : nRoots(sol.nRoots), roots{sol.roots[0], sol.roots[1]} {}
+    Solution(Solution &&sol)
+        : nRoots(sol.nRoots), roots{sol.roots[0], sol.roots[1]} {}
+    Solution& operator=(const Solution& sol) {
+      nRoots = sol.nRoots;
+      roots[0] = sol.roots[0];
+      roots[1] = sol.roots[1];
+      return *this;
+    }
+    Solution& operator=(Solution&& sol) {
+      nRoots = sol.nRoots;
+      roots[0] = sol.roots[0];
+      roots[1] = sol.roots[1];
+      return *this;
+    }
 };
 
 using WSolution = Watcher<Solution>;

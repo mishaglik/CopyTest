@@ -22,6 +22,22 @@ static const DotLogger::Style CopyConstructorNodeStyle =
     .label = "!!!COPY!!!"
 };
 
+static const DotLogger::Style MoveAssignmentNodeStyle = 
+{
+    .shape = "diamond",
+    .fillcolor = "#B0D0B0",
+    .style = "filled",
+    .label = "Move assign"
+};
+
+static const DotLogger::Style MoveConstructorNodeStyle = 
+{
+    .shape = "invhouse",
+    .fillcolor = "#B0D0B0",
+    .style = "filled",
+    .label = "Move"
+};
+
 static const DotLogger::Style CopyAssignmentNodeStyle = 
 {
     .shape = "diamond",
@@ -98,6 +114,19 @@ void Logger::logCreationCopy(const DebugInfo& info)
     dot_.drawEdge(ctorNodeId, info.nodeId, EdgeStyle);
 }
 
+void Logger::logCreationMove(const DebugInfo& info)
+{
+    uint64_t ctorNodeId = ++nodeId;
+    info.nodeId = ++nodeId;
+    dot_.drawVertex(ctorNodeId, MoveConstructorNodeStyle);
+    DotLogger::Style style = DefaultNodeStyle;
+    style.label = makeNodeLabel(info);
+    dot_.drawVertex(info.nodeId, style);
+
+    dot_.drawEdge(info.parentId, ctorNodeId, EdgeConsStyle);
+    dot_.drawEdge(ctorNodeId, info.nodeId, EdgeStyle);
+}
+
 void Logger::logCreationOperator(const DebugInfo& infoRes, const DebugInfo& infoLhs, const DebugInfo& infoRhs, const char* operatorName)
 {
     uint64_t operNodeId = ++nodeId;
@@ -138,6 +167,22 @@ void Logger::logAssigmentCopy(const DebugInfo& info)
 {
     uint64_t assignNodeId = ++nodeId;
     dot_.drawVertex(assignNodeId, CopyAssignmentNodeStyle);
+
+    dot_.drawEdge(info.parentId, assignNodeId, EdgeRhsStyle);
+    dot_.drawEdge(info.nodeId, assignNodeId, EdgeMainStyle);
+
+    info.nodeId = ++nodeId;
+    DotLogger::Style style = DefaultNodeStyle;
+    style.label = makeNodeLabel(info);
+    dot_.drawVertex(info.nodeId, style);
+    
+    dot_.drawEdge(assignNodeId, info.nodeId, EdgeStyle);
+}
+
+void Logger::logAssigmentMove(const DebugInfo& info)
+{
+    uint64_t assignNodeId = ++nodeId;
+    dot_.drawVertex(assignNodeId, MoveAssignmentNodeStyle);
 
     dot_.drawEdge(info.parentId, assignNodeId, EdgeRhsStyle);
     dot_.drawEdge(info.nodeId, assignNodeId, EdgeMainStyle);
