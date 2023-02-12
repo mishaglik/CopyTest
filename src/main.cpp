@@ -85,7 +85,8 @@ int main()
     FUNC_INSPECT
     WNum b(20, "b");
     WNum c(2, "c");
-    WSolution solution = solveSqEq(WNum(1), b, c);
+    // WSolution solution = solveSqEq(WNum(1), b, c);
+    WSolution solution = solveLinEq(WNum(1), b);
     printSolution(solution);
     return 0;
 }
