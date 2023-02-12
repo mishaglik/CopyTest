@@ -31,7 +31,7 @@ public:
 
     template<class U>
     explicit Watcher(U&& u, const char* name = nullptr) : //FIXME: Not only single element constructor
-        T(std::forward(u))
+        T(my::forward<U>(u))
     {
         if(name == nullptr) 
         {
