@@ -25,23 +25,6 @@ struct Solution
 {
     WNum nRoots = "nRoots";
     WNum roots[2] = {{"roots[0]"}, {"roots[1]"}};
-    Solution() {}
-    Solution(const Solution& sol)
-        : nRoots(sol.nRoots), roots{sol.roots[0], sol.roots[1]} {}
-    Solution(Solution &&sol)
-        : nRoots(my::move(sol.nRoots)), roots{my::move(sol.roots[0]), my::move(sol.roots[1])} {}
-    Solution& operator=(const Solution& sol) {
-      nRoots = sol.nRoots;
-      roots[0] = sol.roots[0];
-      roots[1] = sol.roots[1];
-      return *this;
-    }
-    Solution& operator=(Solution&& sol) {
-      nRoots = sol.nRoots;
-      roots[0] = sol.roots[0];
-      roots[1] = sol.roots[1];
-      return *this;
-    }
 };
 
 using WSolution = Watcher<Solution>;
@@ -49,7 +32,7 @@ using WSolution = Watcher<Solution>;
 WSolution solveLinEq(const WNum& a, const WNum& b)
 {
     FUNC_INSPECT
-    WSolution solution("solution");
+    WSolution solution(WNum(0), "solution");
 
     if(a == WNum(0))
     {
