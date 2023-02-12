@@ -1,3 +1,0 @@
-/home/gms/DedInside/GigaInt/build/CMakeFiles/GigaInt.dir
-/home/gms/DedInside/GigaInt/build/CMakeFiles/edit_cache.dir
-/home/gms/DedInside/GigaInt/build/CMakeFiles/rebuild_cache.dir
