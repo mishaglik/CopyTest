@@ -10,7 +10,18 @@ One old man adviced me: "Too many copies". That was all he'd sad - he had to go 
 
 ### See the beast. 
 To examine about copies I wrote simple wrapper class. And logged 
-Lets create a template wrapper watcher class to check how many copying was done and amount of tmp objects. So I've got next image:
+Lets create a template wrapper watcher class to check how many copying was done and amount of tmp objects.
+```C++
+using WNum = Watcher<Num>;
+
+struct Solution
+{
+    WNum nRoots = "nRoots";
+    WNum roots[2] = {{"roots[0]"}, {"roots[1]"}};
+};
+using WSolution = Watcher<Solution>;
+```
+So I've got next image:
 ![Inittial](images/00Initial.png)
 Did you understand anything? Me - nothing beside I have ton of copies and tmp objects. And computer spent really lot of time to compute this.
 So let's make task simplier and solve linear:
