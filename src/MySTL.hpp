@@ -35,7 +35,7 @@ namespace my {
     template<class T>
     T&& forward(typename remove_reference<T>::type&& a)
     {
-        tatic_assert(!std::is_lvalue_reference<T>::value,
+        static_assert(!std::is_lvalue_reference<T>::value,
 	  "my::forward must not be used to convert an rvalue to an lvalue");
         return static_cast<T&&>(a);
     }

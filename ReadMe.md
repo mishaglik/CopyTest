@@ -146,7 +146,5 @@ Ou. It's design of C++ and u is lvalue(!) because it's named. We need function t
 ```
 And out final result is:
 ![final](images/09Fwc.png)
-<!-- idea ptr to rgb. -->
-<!-- legened of graph -->
 <!-- Only move, only fwd, 2 typical mistakes -->
 <!-- Auto git on complie -->
