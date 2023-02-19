@@ -25,6 +25,7 @@ public:
        std::string label;
        std::string tailport;
        std::string headport;
+       std::string weight;
     };
 
     void drawVertex(uint64_t id, const Style& v);
@@ -33,6 +34,8 @@ public:
     void closeSubgraph();
     void setSubgraphLabel(const std::string& string);
     
+    void print(std::string& s) { dotfile_ << s; }
+
     unsigned nTabs = 1;
 
     void tab() { for(size_t i = 0; i < nTabs; ++i) dotfile_ << '\t'; }
