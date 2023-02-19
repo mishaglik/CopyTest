@@ -11,7 +11,7 @@ class Logger
 {
 public:
     Logger(const char* filename) : dot_(filename) {}
-    ~Logger() {}
+    ~Logger();
 
     struct DebugInfo
     {
@@ -35,6 +35,7 @@ public:
 
     void enterFunction(const char* newName);
     void leaveFunction();
+
 private:
     DotLogger dot_;
     static uint64_t nodeId;
@@ -60,7 +61,7 @@ struct FunctionGuard
 #define FUNC_INSPECT FunctionGuard _fg(__PRETTY_FUNCTION__);
 
 template<class T>
-concept Printable = requires(std::stringstream& stream, T t)
+concept Printable = requires(std::ostream& stream, T t)
 {
     stream << t;
 };
