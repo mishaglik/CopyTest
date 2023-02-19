@@ -5,6 +5,9 @@
 #include <string>
 #include <iostream>
 
+uint64_t TempId = 0;
+uint64_t Copies = 0;
+
 DotLogger::DotLogger(const std::string& filename)
 {
     char tmpName[L_tmpnam];
@@ -54,6 +57,8 @@ void DotLogger::openSubgraph()
     tab();
     nTabs++;
     dotfile_ << "subgraph cluster_" << ++fId << "{\n";
+    dotfile_ << "style=filled;\n"
+        << "fillcolor=\"#00000020\";\n";
 }
 
 void DotLogger::setSubgraphLabel(const std::string& string)
@@ -82,9 +87,17 @@ std::ostream& operator<<(std::ostream& ostream, const DotLogger::Style& style)
     STYLE_PRINT_(fgcolor);
     STYLE_PRINT_(fillcolor);
     STYLE_PRINT_(style);
-    STYLE_PRINT_(label);
+    // STYLE_PRINT_(label);
+    if(!style.label.empty())
+    {
+        if(style.label[0] == '<')
+            ostream << "label=" << style.label << " ";
+        else
+            ostream << "label=\"" << style.label << "\" ";
+    }
     STYLE_PRINT_(tailport);
     STYLE_PRINT_(headport);
+    STYLE_PRINT_(weight);
     return ostream;
 }
 #undef STYLE_PRINT_
