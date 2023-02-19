@@ -5,7 +5,7 @@
 #include <string>
 
 extern Logger LOG;
-
+extern uint64_t TempId;
 static const DotLogger::Style ConstructorNodeStyle = 
 {
     .shape = "invhouse",
@@ -40,35 +40,46 @@ static const DotLogger::Style OperatorNodeStyle =
 
 static const DotLogger::Style DefaultNodeStyle = 
 {
-    .shape = "record",
+    .shape = "none",
+    // .fillcolor = "#E0E0E0",
+    // .fillcolor = "white",
+    // .style = "filled"
 };
 
-static const DotLogger::Style EdgeStyle = {};
+static const DotLogger::Style EdgeStyle = {
+    .tailport="s",
+    .headport="n",
+    .weight="100",
+};
 
 static const DotLogger::Style EdgeMainStyle = 
 {
-    // .tailport="s",
+    .tailport="s",
     .headport="n",
+    .weight="100",
 };
 
 static const DotLogger::Style EdgeLhsStyle  = 
 {
-    // .tailport="s",
+    .tailport="s",
     .headport="w",
+    .weight = "1",
 };
 
 
 
 static const DotLogger::Style EdgeRhsStyle  = 
 {
-    // .tailport="s",
+    .tailport="s",
     .headport="e",
+    .weight = "1",
 };
 
 static const DotLogger::Style EdgeConsStyle  = 
 {
-    // .tailport="s",
+    .tailport="s",
     .headport="e",
+    .weight = "1",
 };
 
 uint64_t Logger::nodeId = 0;
@@ -160,6 +171,7 @@ void Logger::enterFunction(const char* newName)
 {
     dot_.openSubgraph();
     dot_.setSubgraphLabel(newName);
+    
 }
 
 void Logger::leaveFunction()
@@ -168,10 +180,73 @@ void Logger::leaveFunction()
 }
 
 
+static unsigned ptrToColor(void* ptr)
+{
+    uintptr_t val = reinterpret_cast<uintptr_t>(ptr);
+    val &= 0x1FFFFF;
+    val <<= 3;
+    return val;
+}
+
 std::string Logger::makeNodeLabel(const DebugInfo& info)
 {
     std::stringstream label;
-    label <<  "{name | value | addr | history}  | {" << info.originalName <<  " | " <<
-        info.value.str() <<   " | " << info.address <<  " | " << info.history << "}";
+    // label <<  "{name | value | addr | history}  | {" << info.originalName <<  " | " <<
+        // info.value.str() <<   " | " << info.address <<  " | " << info.history << "}";
+    label << "<\n"
+             "  <TABLE CELLSPACING=\"0\" BGCOLOR=\"#E0E0E0\">\n"
+             "    <TR>\n"
+             "    <TD> name </TD>\n"
+             "    <TD> " << info.originalName << " </TD>\n"
+             "    </TR>\n"
+             "    <TR>\n"
+             "    <TD> value </TD>\n"
+             "    <TD> " << info.value.str()  << " </TD>\n"
+             "    </TR>\n"
+             "    <TR>\n"
+             "    <TD> addr </TD>\n"
+             "    <TD BGCOLOR=\"#"<< std::hex << ptrToColor(info.address) <<"\"> " << info.address      << " </TD>\n"
+             "    </TR>\n"
+             "    <TR>\n"
+             "    <TD> history </TD>\n"
+             "    <TD> " << info.history      << " </TD>\n"
+             "    </TR>\n"
+             "  </TABLE>\n>\n";
     return label.str();
+}
+
+Logger::~Logger()
+{
+    // dot_.openSubgraph();
+    // dot_.setSubgraphLabel("Legend");
+    // dot_.dotfile_ << "rankdir=LR;\n";
+    // dot_.drawVertex(++nodeId, {.shape="invhouse", .label="Constructor"});
+    // dot_.drawVertex(++nodeId, {.shape="none", .label="    "});
+    // dot_.drawVertex(++nodeId, {.shape="diamond", .label="Operator"});
+    // dot_.drawVertex(++nodeId, {.shape="none", .label="    "});
+    // // dot_.dotfile_ << "{rank=same; "<< nodeId-2<<", " <<nodeId-1<< "}\n";
+    // dot_.drawEdge(nodeId-3, nodeId-1, {.label="This", .headport="n", .weight="1000"});
+    // dot_.drawEdge(nodeId, nodeId-1, {.label="Lhs", .headport="w", .weight="1000"});
+    // dot_.drawEdge(nodeId-2, nodeId-1,   {.label="Rhs", .headport="e", .weight="1000"});
+
+    // dot_.dotfile_ << "Results [shape=none, label = <\n"
+    //     "<TABLE>\n"
+    //     "<TR>\n"
+    //     "<TD> Copies </TD>\n"
+    //     "<TD> "<< 0 <<" </TD>\n"
+    //     "</TR>\n"
+    //     "<TR>\n"
+    //     "<TD> Temp objects </TD>\n"
+    //     "<TD> "<< TempId <<" </TD>\n"
+    //     "</TR>\n"
+    //     "</TABLE>\n"
+    // ">]\n";
+
+    // dot_.drawVertex(++nodeId, {.shape="plaintext", .fillcolor="#B0B0FF", .style="filled", .label="Other"});
+    // dot_.drawVertex(++nodeId, {.shape="plaintext", .fillcolor="#B0D0B0", .style="filled", .label="Moving"});
+    // dot_.drawVertex(++nodeId, {.shape="plaintext", .fillcolor="red", .style="filled", .label="Copying"});
+    // dot_.drawVertex(++nodeId, C);
+    // dot_.closeSubgraph();
+    extern uint64_t Copies;
+    std::cerr << "Copies: " << Copies << "\nTempObjects: " << TempId << '\n';
 }
