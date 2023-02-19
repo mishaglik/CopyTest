@@ -2,6 +2,11 @@
 #define WATCHER_HPP
 #include "Logger.hpp"
 #include <string>
+#include <utility>
+#include <type_traits>
+
+extern uint64_t TempId;
+extern uint64_t Copies;
 
 template<class T>
 class Watcher : public T
@@ -12,7 +17,7 @@ public:
         if(name == nullptr) 
         {
             _debugInfo.originalName = "TMP#";
-            _debugInfo.originalName += std::to_string(_tmpId++);
+            _debugInfo.originalName += std::to_string(TempId++);
         }
         else {
             _debugInfo.originalName = name;
@@ -33,7 +38,7 @@ public:
         if(name == nullptr) 
         {
             _debugInfo.originalName = "TMP#";
-            _debugInfo.originalName += std::to_string(_tmpId++);
+            _debugInfo.originalName += std::to_string(TempId++);
         }
         else {
             _debugInfo.originalName = name;
@@ -53,7 +58,7 @@ public:
         if(name == nullptr) 
         {
             _debugInfo.originalName = "TMP#";
-            _debugInfo.originalName += std::to_string(_tmpId++);
+            _debugInfo.originalName += std::to_string(TempId++);
         }
         else {
             _debugInfo.originalName = name;
@@ -70,7 +75,7 @@ public:
     Watcher(const T& t, const Watcher& lhs, const Watcher& rhs, const char* operatorName) : T(t)
     {
         _debugInfo.originalName = "TMP#";
-        _debugInfo.originalName += std::to_string(_tmpId++);
+        _debugInfo.originalName += std::to_string(TempId++);
         _debugInfo.history = lhs._debugInfo.history + operatorName + rhs._debugInfo.history;
         _debugInfo.address = this;
         if constexpr (Printable<T>)
@@ -83,7 +88,7 @@ public:
     Watcher(const T& t, const Watcher& lhs, const char* operatorName) : T(t)
     {
         _debugInfo.originalName = "TMP#";
-        _debugInfo.originalName += std::to_string(_tmpId++);
+        _debugInfo.originalName += std::to_string(TempId++);
         _debugInfo.history = lhs._debugInfo.history + operatorName;
         _debugInfo.address = this;
         if constexpr (Printable<T>)
@@ -95,10 +100,11 @@ public:
 
     Watcher(const Watcher& other) : T(other)
     {
-        _debugInfo.history = "Copy of \\\"" + other._debugInfo.history + "\\\"";
+        _debugInfo.history = "<B><FONT COLOR=\"#800000\" POINT-SIZE=\"18\">COPY</FONT></B> of \"" + other._debugInfo.history + "\"";
         _debugInfo.originalName = _debugInfo.history;
         _debugInfo.address = this;
         _debugInfo.parentId = other._debugInfo.nodeId;
+        Copies++;
         if constexpr (Printable<T>)
         {
             _debugInfo.value << *this;
@@ -108,9 +114,10 @@ public:
 
     Watcher& operator=(const Watcher& other)
     {
-        _debugInfo.history = "Copy of \\\"" + other._debugInfo.history + "\\\"";
-        _debugInfo.originalName = _debugInfo.history;
+        T::operator=(other);
+        _debugInfo.history = "<B><FONT COLOR=\"#800000\" POINT-SIZE=\"18\">COPY</FONT></B> of \"" + other._debugInfo.history + "\"";
         _debugInfo.parentId = other._debugInfo.nodeId;
+        Copies++;
         if constexpr (Printable<T>)
         {
             _debugInfo.value.str("");
@@ -131,7 +138,6 @@ public:
         LOG.logDeletion(_debugInfo);
     }
 private:
-    static uint64_t _tmpId;
     Logger::DebugInfo _debugInfo;
 
 };
@@ -182,6 +188,4 @@ bool operator<(Watcher<T> lhs, Watcher<T> rhs)
     return static_cast<T>(lhs) < static_cast<T>(rhs);
 }
 
-template<class T>
-uint64_t Watcher<T>::_tmpId = 0;
 #endif /* WATCHER_HPP */
