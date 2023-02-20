@@ -11,7 +11,7 @@ One old man adviced me: "Too many copies". That was all he'd sad - he had to go 
 ### Deep copy vs Shallow copy
 My long arithmetics class posses some *external resource* - dynamically allocated memory: ```uint64_t* data``` When we copying number we **must** do a *deep copy* - alloc a new region and copy all data. Otherwise (in case of shallow copy - copy only field values) it leads to memory management and possesion problems: double frees, use after free. Or we will use same memoty more than once in same time.
 ### See the beast. 
-To examine about copies I wrote simple wrapper class. And logged 
+To examine about copies I wrote simple [wrapper class](https://github.com/mishaglik/CopyTest/blob/ver1/src/Watcher.hpp).. And logged 
 Lets create a template wrapper watcher class to check how many copying was done and amount of tmp objects.
 ```C++
 using WNum = Watcher<Num>;
@@ -54,7 +54,7 @@ So we have **13 Copies and 8 temp objects**.
 ### Reduce copies.
 First thing I'd been able to google was using const references.
 So I'd performed this optimization where I could.
-And I saw something terrible:
+And I saw something terrible [here](https://github.com/mishaglik/CopyTest/blob/Linear/src/Watcher.hpp):
 ```C++
 template<class T> 
 Watcher<T> operator+(Watcher<T> lhs, Watcher<T> rhs);
@@ -63,12 +63,14 @@ Num operator+(Num a, Num b);
 
 ```
 Let's do copies while doing copies. We're great! Copies in square.
+[Fixing it](https://github.com/mishaglik/CopyTest/blob/Ref/src/Watcher.hpp)
 Now all operators has next sematics:
+
 ```C++
 Num operator+(const Num& a, const Num& b);
 
 ```
-and pickture has became much better:
+and picture has became much better:
 ![Refs](images/4Refs.png)
 So we have **6 Copies and 6 temp objects**. 
 But I was unpleasant. So I've gone further.
@@ -82,7 +84,7 @@ Num(Num&& oth) : x(oth.x) {}
 ```
 Double ampersant is not reference to reference. It means reference to **rvalue**. Rvalue historically was name for expression on the right-hand side of an assignment expression. But in C++ it means "reference to temprorary object." We can just ~~steal~~ move data from one object to another.
 
-Let's see reuslt:
+Let's see [reuslt](https://github.com/mishaglik/CopyTest/blob/MoveCtors/src/Watcher.hpp):
 ![MoveCons](images/05MoveCons.png)
 **Copies: 3 Temp objects: 5**
 
@@ -119,7 +121,7 @@ T&& move(T&& t)
     return static_cast<T&&>(t));
 }
 ```
-This is ok. But we can better. ```T&&``` in demonic hell named C++ is *universal* link. So it can accept as rvalue as lvaues. So we can implement move like this:
+This is ok. But we can better. ```T&&``` in demonic hell named C++ is *universal* link. So it can accept as rvalue as lvaues. So we can implement move [like this](https://github.com/mishaglik/CopyTest/blob/move/src/MySTL.hpp):
 <!-- TODO: More explanations -->
 ```C++
 template<class T>
@@ -184,7 +186,7 @@ We need function that returns value - forward:
         return static_cast<T&&>(a);
     }
 ```
-And out final result is:
+And out [final result](https://github.com/mishaglik/CopyTest/blob/master/src/MySTL.hpp) is:
 ![final](images/9Fwc.png)
 
 ## Typical mistakes.
