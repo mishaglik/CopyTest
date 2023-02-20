@@ -8,6 +8,8 @@ I'd been very glad when I knew about overloading. So I've decided to write long 
 As for test I decided to solve square equations. But programm worked too slow. I've been searching for ages to optimize, but that gave nothing.
 One old man adviced me: "Too many copies". That was all he'd sad - he had to go rest. So I've decided to research this problem.
 
+### Deep copy vs Shallow copy
+My long arithmetics class posses some *external resource* - dynamically allocated memory: ```uint64_t* data``` When we copying number we **must** do a *deep copy* - alloc a new region and copy all data. Otherwise (in case of shallow copy - copy only field values) it leads to memory management and possesion problems: double frees, use after free. Or we will use same memoty more than once in same time.
 ### See the beast. 
 To examine about copies I wrote simple wrapper class. And logged 
 Lets create a template wrapper watcher class to check how many copying was done and amount of tmp objects.
@@ -149,25 +151,6 @@ So we have to use ```U&&```
 No effect!
 
 Ou. It's design of C++ and u is lvalue(!) because it's named.
-
-Ok, let's use ```my::move``` to pass it through.
-
-Uuuups:
-
-```
-==41771==ERROR: AddressSanitizer: attempting double-free on 0x6020000003b0 in thread T0:
-    #0 0x7fd70acc178a in operator delete(void*, unsigned long) /usr/src/debug/gcc/gcc/libsanitizer/asan/asan_new_delete.cpp:164
-    #1 0x562603a86759 in Num::~Num() /home/user/DedInside/CopyTest/src/Num.hpp:13
-    #2 0x562603a86759 in Watcher<Num>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
-    #3 0x562603a86759 in Solution::~Solution() /home/user/DedInside/CopyTest/src/main.cpp:24
-    #4 0x562603a86759 in Watcher<Solution>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
-    #5 0x562603a86759 in solveLinEq(Watcher<Num> const&, Watcher<Num> const&) /home/user/DedInside/CopyTest/src/main.cpp:52
-    #6 0x562603a88123 in main /home/user/DedInside/CopyTest/src/main.cpp:92
-    #7 0x7fd709e3c78f  (/usr/lib/libc.so.6+0x2378f)
-    #8 0x7fd709e3c849 in __libc_start_main (/usr/lib/libc.so.6+0x23849)
-    #9 0x562603a7d564 in _start (/home/user/DedInside/CopyTest/build/GigaInt+0xc8564)
-```
-We accidentially casted lvalue to rvalue, when should be using copying.
 We need function that returns value - forward:
 <!-- TODO: Some explanations. -->
 ```C++
@@ -187,10 +170,49 @@ And out final result is:
 ![final](images/9Fwc.png)
 
 ## Typical mistakes.
-Let's write swap function. 
+Let's continue to implement wrapper functions. For example sqrt. It has two implementations: One for lvalue with copying, second for rvalue for no copy.
+
 ```C++
+template<class U>
+Watcher<U> wSqrt(Watcher<U>&& watcher)
+{
+    return sqrt(my::move(watcher));
+}
 
 ```
+
+Uuuups:
+
+```
+==41771==ERROR: AddressSanitizer: attempting double-free on 0x6020000003b0 in thread T0:
+    #0 0x7fd70acc178a in operator delete(void*, unsigned long) /usr/src/debug/gcc/gcc/libsanitizer/asan/asan_new_delete.cpp:164
+    #1 0x562603a86759 in Num::~Num() /home/user/DedInside/CopyTest/src/Num.hpp:13
+    #2 0x562603a86759 in Watcher<Num>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
+    #3 0x562603a86759 in Solution::~Solution() /home/user/DedInside/CopyTest/src/main.cpp:24
+    #4 0x562603a86759 in Watcher<Solution>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
+    #5 0x562603a86759 in solveLinEq(Watcher<Num> const&, Watcher<Num> const&) /home/user/DedInside/CopyTest/src/main.cpp:52
+    #6 0x562603a88123 in main /home/user/DedInside/CopyTest/src/main.cpp:92
+    #7 0x7fd709e3c78f  (/usr/lib/libc.so.6+0x2378f)
+    #8 0x7fd709e3c849 in __libc_start_main (/usr/lib/libc.so.6+0x23849)
+    #9 0x562603a7d564 in _start (/home/user/DedInside/CopyTest/build/GigaInt+0xc8564)
+```
+We accidentially casted lvalue to rvalue, when should be using copying.
+So move is very bad here. We should use forward instead.
+
+### Summary
+We have at least 3 ways to reduce copying: 
++ Pass arguments by const reference
++ Write move constructors.
++ Use std::move, std::forward
+
+And result is:
+
+| Optimiztion     | Copies  | Temp object  |
+|-----------------|---------|--------------|
+|Defaut           | 13      |             8|
+|Refs             |       6 |             6|
+|Move contsructors| 3       | 5            |
+|Move + forward   | 0       | 5            |
 
 <!-- Only move, only fwd, 2 typical mistakes -->
 <!-- Auto git on complie -->
