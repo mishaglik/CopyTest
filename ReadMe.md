@@ -38,15 +38,15 @@ Let me explain what does everything in graph mean:
 Anything producing objects has shape "invhouse" (costructors). Diamond shape means operators such as assignment. Arrow to left means left side argument, to right - right side argument.
 Also I've colored each address to unique color. So it will be possible to detect memoty usage.
 
-![Linear](images/01Linear.png)
+![Linear](images/1Linear.png)
 
 
 Here we can see a lot of tmp objects:
 
 
-![TMP](images/02LinearTMP.png)
+![TMP](images/2LinearTMP.png)
 and number of copies:
-![TMP](images/03LinearCopy.png)
+![TMP](images/3LinearCopy.png)
 
 So we have **13 Copies and 8 temp objects**.
 ### Reduce copies.
@@ -67,7 +67,7 @@ Num operator+(const Num& a, const Num& b);
 
 ```
 and pickture has became much better:
-![Refs](images/04Refs.png)
+![Refs](images/4Refs.png)
 So we have **6 Copies and 6 temp objects**. 
 But I was unpleasant. So I've gone further.
 
@@ -87,7 +87,7 @@ Let's see reuslt:
 It's better but not ok.
 Where does this copies sit?
 So ```solution``` was moved:
-![Moved](images/06MoveCons.png)
+![Moved](images/6MoveCons.png)
 
 but all parts copied. *Brain explosion sounds*.
 ### Move
@@ -117,7 +117,7 @@ Watcher(Watcher<T>&& other) : T(my::move(other))
 
 ```
 and graph:
-![Move](images/07Move.png)
+![Move](images/7Move.png)
 
 **0 copies, 5 tmp objects**
 
@@ -131,7 +131,7 @@ to
     WSolution solution(WNum(0), "solution");
 ```
 and...
-![Fwd](images/08Fwc.png)
+![Fwd](images/8Fwc.png)
 NOooooooooooooooooooooooooo!!!!!!!!!!!!!!!!
 ### Forwarding.
 Fail in watcher realization:
@@ -184,6 +184,13 @@ We need function that returns value - forward:
     }
 ```
 And out final result is:
-![final](images/09Fwc.png)
+![final](images/9Fwc.png)
+
+## Typical mistakes.
+Let's write swap function. 
+```C++
+
+```
+
 <!-- Only move, only fwd, 2 typical mistakes -->
 <!-- Auto git on complie -->

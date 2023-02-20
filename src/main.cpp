@@ -90,6 +90,6 @@ int main()
     WNum c(2, "c");
     // WSolution solution = solveSqEq(WNum(1), b, c);
     WSolution solution = solveLinEq(WNum(1), b);
-    printSolution(solution);
+    printSolution(solution);    
     return 0;
 }

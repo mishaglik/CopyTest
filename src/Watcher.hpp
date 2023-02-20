@@ -157,6 +157,12 @@ public:
         return *this;
     }
 
+    template<class U>
+    void function1(U&& u)
+    {
+        T::function1(my::forward<U>(u));
+    }
+
     ~Watcher()
     {
         LOG.logDeletion(_debugInfo);
