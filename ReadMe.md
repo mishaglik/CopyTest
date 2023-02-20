@@ -102,6 +102,24 @@ And reading C++ standart we see that every named thing is lvalue.
 So we have to cast it to rvalue.
 But every time casting is annoying.
 Let's write a function to do it (for explatations go to [article](https://habr.com/ru/post/322132/)):
+
+So we need to do template funtion that casts lvalue to rvalue.
+```C++
+template<class T>
+T&& move(T& t)
+    return static_cast<T&&>(t));
+}
+```
+
+this is not exellent because it can't take rvalue.
+So let's override it for rvalue:
+```C++
+template<class T>
+T&& move(T&& t)
+    return static_cast<T&&>(t));
+}
+```
+This is ok. But we can better. ```T&&``` in demonic hell named C++ is *universal* link. So it can accept as rvalue as lvaues. So we can implement move like this:
 <!-- TODO: More explanations -->
 ```C++
 template<class T>
