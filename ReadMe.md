@@ -24,7 +24,20 @@ using WSolution = Watcher<Solution>;
 So I've got next image:
 ![Inittial](images/00Initial.png)
 Did you understand anything? Me - nothing beside I have ton of copies and tmp objects. And computer spent really lot of time to compute this.
-So let's make task simplier and solve linear:
+So let's make task simplier and solve linear equation, color our scheme.
+Let me explain what does everything in graph mean:
+![Legend](images/Legend.png)
+>Copies are red
+>
+>Others are blue
+>
+>Move is sweet
+>
+>~~But not as sweet as you…~~
+
+Anything producing objects has shape "invhouse" (costructors). Diamond shape means operators such as assignment. Arrow to left means left side argument, to right - right side argument.
+Also I've colored each address to unique color. So it will be possible to detect memoty usage.
+
 ![Linear](images/01Linear.png)
 
 
@@ -35,6 +48,7 @@ Here we can see a lot of tmp objects:
 and number of copies:
 ![TMP](images/03LinearCopy.png)
 
+So we have **13 Copies and 8 temp objects**.
 ### Reduce copies.
 First thing I'd been able to google was using const references.
 So I'd performed this optimization where I could.
@@ -54,6 +68,7 @@ Num operator+(const Num& a, const Num& b);
 ```
 and pickture has became much better:
 ![Refs](images/04Refs.png)
+So we have **6 Copies and 6 temp objects**. 
 But I was unpleasant. So I've gone further.
 
 ### Movement contstuctor.
@@ -63,10 +78,12 @@ They has next semantics:
 ```C++
 Num(Num&& oth) : x(oth.x) {}
 ```
-Double ampersant is not reference to reference. It means reference to **rvalue**. Rvalue so-called, historically, because rvalues could appear on the right-hand side of an assignment expression. But in C++ it means "reference to temprorary object." We can just ~~steal~~ move data from one object to another.
+Double ampersant is not reference to reference. It means reference to **rvalue**. Rvalue historically was name for expression on the right-hand side of an assignment expression. But in C++ it means "reference to temprorary object." We can just ~~steal~~ move data from one object to another.
 
 Let's see reuslt:
 ![MoveCons](images/05MoveCons.png)
+**Copies: 3 Temp objects: 5**
+
 It's better but not ok.
 Where does this copies sit?
 So ```solution``` was moved:
@@ -102,6 +119,8 @@ Watcher(Watcher<T>&& other) : T(my::move(other))
 and graph:
 ![Move](images/07Move.png)
 
+**0 copies, 5 tmp objects**
+
 Totally win on copies! But problems don't leave us.
 Let's change
 ```C++ 
@@ -129,7 +148,27 @@ So we have to use ```U&&```
 
 No effect!
 
-Ou. It's design of C++ and u is lvalue(!) because it's named. We need function that returns value - forward:
+Ou. It's design of C++ and u is lvalue(!) because it's named.
+
+Ok, let's use ```my::move``` to pass it through.
+
+Uuuups:
+
+```
+==41771==ERROR: AddressSanitizer: attempting double-free on 0x6020000003b0 in thread T0:
+    #0 0x7fd70acc178a in operator delete(void*, unsigned long) /usr/src/debug/gcc/gcc/libsanitizer/asan/asan_new_delete.cpp:164
+    #1 0x562603a86759 in Num::~Num() /home/user/DedInside/CopyTest/src/Num.hpp:13
+    #2 0x562603a86759 in Watcher<Num>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
+    #3 0x562603a86759 in Solution::~Solution() /home/user/DedInside/CopyTest/src/main.cpp:24
+    #4 0x562603a86759 in Watcher<Solution>::~Watcher() /home/user/DedInside/CopyTest/src/Watcher.hpp:163
+    #5 0x562603a86759 in solveLinEq(Watcher<Num> const&, Watcher<Num> const&) /home/user/DedInside/CopyTest/src/main.cpp:52
+    #6 0x562603a88123 in main /home/user/DedInside/CopyTest/src/main.cpp:92
+    #7 0x7fd709e3c78f  (/usr/lib/libc.so.6+0x2378f)
+    #8 0x7fd709e3c849 in __libc_start_main (/usr/lib/libc.so.6+0x23849)
+    #9 0x562603a7d564 in _start (/home/user/DedInside/CopyTest/build/GigaInt+0xc8564)
+```
+We accidentially casted lvalue to rvalue, when should be using copying.
+We need function that returns value - forward:
 <!-- TODO: Some explanations. -->
 ```C++
  template<class T> //Lvalue case
