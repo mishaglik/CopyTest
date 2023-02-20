@@ -73,7 +73,7 @@ and pickture has became much better:
 So we have **6 Copies and 6 temp objects**. 
 But I was unpleasant. So I've gone further.
 
-### Movement contstuctor.
+### Move contstuctor.
 I found next good artice by *link here*.
 And implented move constructors ans assignment operators.
 They has next semantics:
