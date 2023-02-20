@@ -24,7 +24,7 @@ struct Solution
 using WSolution = Watcher<Solution>;
 ```
 So I've got next image:
-![Inittial](images/00Initial.png)
+![Inittial](images/0Initial.png)
 Did you understand anything? Me - nothing beside I have ton of copies and tmp objects. And computer spent really lot of time to compute this.
 So let's make task simplier and solve linear equation, color our scheme.
 Let me explain what does everything in graph mean:
