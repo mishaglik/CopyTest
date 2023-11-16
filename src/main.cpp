@@ -8,6 +8,8 @@
 #include <vector>
 #include <cmath>
 #include "MySTL.hpp"
+#include "print.hpp"
+#include "stream.hpp"
 
 Logger LOG("img.png");
 
@@ -78,18 +80,25 @@ WSolution solveSqEq(const WNum& a, const WNum& b, const WNum& c)
     return solution;
 }
 
+mgk::ostream& operator<<(mgk::ostream& out, const WNum& num)
+{
+    return out << num.x;
+}
+
 void printSolution(const Solution& sol)
 {
-    std::cout << sol.nRoots.x << '\n';
+    FUNC_INSPECT
+    assert(sol.nRoots == WNum(2));
+    mgk::print("%$ roots are %$ and %$\n", sol.nRoots, sol.roots[0], sol.roots[1]);
 }
 
 int main()
 {
     FUNC_INSPECT
     WNum b(20, "b");
-    WNum c(2, "c");
-    // WSolution solution = solveSqEq(WNum(1), b, c);
-    WSolution solution = solveLinEq(WNum(1), b);
+    WNum c(-2, "c");
+    WSolution solution = solveSqEq(WNum(1), b, c);
+    // WSolution solution = solveLinEq(WNum(1), b);
     printSolution(solution);    
     return 0;
 }

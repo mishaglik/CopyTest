@@ -23,6 +23,7 @@ target_sources(${PROJECT_NAME}
         src/DotLogger.hpp
         src/Num.hpp
         src/Num.cpp
+        src/stream.cpp
 )
 
 

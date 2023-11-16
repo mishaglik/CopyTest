@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+extern uint64_t Copies;
+
 extern Logger LOG;
 extern uint64_t TempId;
 static const DotLogger::Style ConstructorNodeStyle = 
@@ -114,6 +116,8 @@ void Logger::logCreation(const DebugInfo& info)
 
 void Logger::logCreationCopy(const DebugInfo& info)
 {
+    Copies++;
+
     uint64_t ctorNodeId = ++nodeId;
     info.nodeId = ++nodeId;
     dot_.drawVertex(ctorNodeId, CopyConstructorNodeStyle);
@@ -181,6 +185,8 @@ void Logger::logAssigmentCopy(const DebugInfo& info)
 
     dot_.drawEdge(info.parentId, assignNodeId, EdgeRhsStyle);
     dot_.drawEdge(info.nodeId, assignNodeId, EdgeMainStyle);
+
+    Copies++;
 
     info.nodeId = ++nodeId;
     DotLogger::Style style = DefaultNodeStyle;
